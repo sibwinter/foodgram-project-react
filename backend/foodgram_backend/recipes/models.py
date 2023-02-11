@@ -10,6 +10,11 @@ class Ingredient(models.Model):
         max_length=200,
         verbose_name='Название ингредиента'
     )
+    slug = models.SlugField(
+        max_length=200,
+        verbose_name='Уникальное имя ингредиента',
+        unique=True,
+    )
     measurement_unit = models.CharField(
         max_length=200,
         verbose_name='Единица измерения',
@@ -26,9 +31,15 @@ class Tag(models.Model):
         unique=True,
     )
 
+
 class Recipes(models.Model):
 
     name = models.CharField(max_length=200, verbose_name='Название рецепта')
+    slug = models.SlugField(
+        max_length=200,
+        verbose_name='Уникальное имя рецепта',
+        unique=True,
+    )
     text = models.TextField(
         verbose_name='Описание рецепта',
         null=True,
@@ -43,13 +54,16 @@ class Recipes(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
-        verbose_name='список тэгов'
+        verbose_name='список тэгов',
+        related_name='recipes'
     )
     ingredients = models.ManyToManyField(
         Ingredient,
         through='Ingredients_with_amount',
-        verbose_name='список ингредиентов'
+        verbose_name='список ингредиентов',
+        related_name='recipes'
     )
+    image = models.ImageField(upload_to='uploads/')
 
 
 class Ingredients_with_amount(models.Model):
