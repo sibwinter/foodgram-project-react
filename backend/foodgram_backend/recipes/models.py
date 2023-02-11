@@ -20,7 +20,9 @@ class Ingredient(models.Model):
         verbose_name='Единица измерения',
         default="кг"
     )
-
+    
+    def __str__(self):
+        return self.name[:15]
 
 class Tag(models.Model):
     name = models.CharField(max_length=200, verbose_name='Название тэга')
@@ -31,6 +33,12 @@ class Tag(models.Model):
         unique=True,
     )
 
+    def __str__(self):
+        return self.name[:15]
+
+
+
+
 
 class Recipes(models.Model):
 
@@ -40,6 +48,10 @@ class Recipes(models.Model):
         verbose_name='Уникальное имя рецепта',
         unique=True,
     )
+    pub_date = models.DateTimeField(
+        verbose_name='Дата',
+        help_text='Укажите дату публикции',
+        auto_now_add=True)
     text = models.TextField(
         verbose_name='Описание рецепта',
         null=True,
@@ -59,15 +71,30 @@ class Recipes(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='Ingredients_with_amount',
-        verbose_name='список ингредиентов',
-        related_name='recipes'
-    )
+        through='RecipeIngredientAmount',
+        related_name='recipes',
+        verbose_name='Ингредиенты')
     image = models.ImageField(upload_to='uploads/')
 
+    class Meta:
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+        ordering = ('-pub_date',)
 
-class Ingredients_with_amount(models.Model):
-    ingredient = models.ForeignKey(Ingredient)
+    def __str__(self):
+        return self.name[:15]
+
+
+class RecipeIngredientAmount(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+    )
+    recipe = models.ForeignKey(
+
+        Recipes,
+        on_delete=models.CASCADE
+    )
     amount = models.SmallIntegerField(
         verbose_name="Количество"
     )
