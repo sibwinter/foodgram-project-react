@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Q, F
 
 
 User = get_user_model()
@@ -21,8 +22,13 @@ class Ingredient(models.Model):
         default="кг"
     )
     
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+
     def __str__(self):
         return self.name[:15]
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=200, verbose_name='Название тэга')
@@ -33,11 +39,12 @@ class Tag(models.Model):
         unique=True,
     )
 
+    class Meta:
+        verbose_name = 'Тэг'
+        verbose_name_plural = 'Теги'
+
     def __str__(self):
         return self.name[:15]
-
-
-
 
 
 class Recipes(models.Model):
@@ -98,3 +105,56 @@ class RecipeIngredientAmount(models.Model):
     amount = models.SmallIntegerField(
         verbose_name="Количество"
     )
+    name = f'Количество игредиента  в рецепте'
+
+    class Meta:
+        verbose_name = 'Ингредиенты в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
+
+    def __str__(self):
+        return self.name
+
+
+class Favourite(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favourite'
+    )
+    recipe = models.ForeignKey(
+        Recipes,
+        on_delete=models.CASCADE,
+        related_name='favourite'
+    )
+    
+    class Meta:
+        verbose_name = 'Избранное'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique favourite'
+            ),
+        ]
+
+    def __str__(self):
+        return self.user.get_username()
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='follower')
+
+    following = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='following')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'following'],
+                name='unique following'
+            ),
+            models.CheckConstraint(
+                check=~Q(user=F('following')),
+                name='check_start_date',
+            )
+        ]
