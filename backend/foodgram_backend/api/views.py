@@ -1,5 +1,5 @@
-from api.serializers import TagSerializer
-from recipes.models import Recipes, Tag
+from api.serializers import TagSerializer, IngredientSerializer
+from recipes.models import Recipes, Tag, Ingredient
 from rest_framework import filters, permissions, status, viewsets
 
 
@@ -7,3 +7,8 @@ class TagViewSet(viewsets.ModelViewSet):
     
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+class IngredientViewSet(viewsets.ModelViewSet):
+    
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer

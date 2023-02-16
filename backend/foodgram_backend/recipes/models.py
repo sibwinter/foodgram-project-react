@@ -11,11 +11,6 @@ class Ingredient(models.Model):
         max_length=200,
         verbose_name='Название ингредиента'
     )
-    slug = models.SlugField(
-        max_length=200,
-        verbose_name='Уникальное имя ингредиента',
-        unique=True,
-    )
     measurement_unit = models.CharField(
         max_length=200,
         verbose_name='Единица измерения',
@@ -105,14 +100,13 @@ class RecipeIngredientAmount(models.Model):
     amount = models.SmallIntegerField(
         verbose_name="Количество"
     )
-    name = f'Количество игредиента  в рецепте'
 
     class Meta:
         verbose_name = 'Ингредиенты в рецепте'
         verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
-        return self.name
+        return f'Количество игредиента  в рецепте'
 
 
 class Favourite(models.Model):
@@ -152,9 +146,5 @@ class Follow(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'following'],
                 name='unique following'
-            ),
-            models.CheckConstraint(
-                check=~Q(user=F('following')),
-                name='check_start_date',
             )
         ]

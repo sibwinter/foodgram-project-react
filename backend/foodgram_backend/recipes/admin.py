@@ -16,8 +16,8 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'slug',)
-    list_filter = ('name', 'slug',)
+    list_display = ('pk', 'name', )
+    list_filter = ('name', )
 
 @admin.register(RecipeIngredientAmount)
 class RecipeIngredientAmountAdmin(admin.ModelAdmin):

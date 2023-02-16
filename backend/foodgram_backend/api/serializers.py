@@ -9,6 +9,12 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class IngredientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'measurement_unit')
+
+
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipes
