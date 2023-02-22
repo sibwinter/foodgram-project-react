@@ -1,5 +1,5 @@
 from django.contrib import admin
-from recipes.models import Recipes, Tag, Ingredient, RecipeIngredientAmount, Favourite, Follow
+from recipes.models import Recipes, Tag, Ingredient, RecipeIngredientAmount, Favourite
 
 
 @admin.register(Recipes)
@@ -31,9 +31,5 @@ class FavouriteAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe',)
     list_filter = ('user', )
 
-@admin.register(Follow)
-class FollowAdmin(admin.ModelAdmin):
-    list_display = ('user', 'following',)
-    list_filter = ('user', )
 
 

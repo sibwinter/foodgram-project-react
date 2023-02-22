@@ -1,9 +1,6 @@
-from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import Q, F
 
-
-User = get_user_model()
+from users.models import User
 
 
 class Ingredient(models.Model):
@@ -106,7 +103,7 @@ class RecipeIngredientAmount(models.Model):
         verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
-        return f'Количество игредиента  в рецепте'
+        return 'Количество игредиента  в рецепте'
 
 
 class Favourite(models.Model):
@@ -134,17 +131,3 @@ class Favourite(models.Model):
         return self.user.get_username()
 
 
-class Follow(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='follower')
-
-    following = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='following')
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'following'],
-                name='unique following'
-            )
-        ]
