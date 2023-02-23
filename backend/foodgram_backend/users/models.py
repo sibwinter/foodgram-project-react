@@ -93,8 +93,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
 
     objects = CustomUserManager()
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"

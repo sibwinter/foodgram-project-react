@@ -64,7 +64,7 @@ class FollowViewSet(APIView):
         )
 
 
-class FollowingViewSet(ListAPIView):
+class FollowListView(ListAPIView):
     serializer_class = FollowSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPageNumberPagination
