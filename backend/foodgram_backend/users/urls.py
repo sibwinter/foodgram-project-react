@@ -6,6 +6,7 @@ from .views import CustomUserViewSet, FollowListView, FollowViewSet
 router = DefaultRouter()
 router.register('users', CustomUserViewSet, basename='users')
 
+
 urlpatterns = [
     path(
         'users/subscriptions/',
