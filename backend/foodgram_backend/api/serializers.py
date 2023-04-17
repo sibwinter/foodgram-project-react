@@ -1,5 +1,5 @@
 from django.contrib.auth.password_validation import validate_password
-
+from django.core import exceptions
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from djoser.serializers import UserCreateSerializer, UserSerializer
@@ -143,13 +143,15 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipes
-        fields = ('__all__') 
+        fields = ('__all__')
 
 
 class RecipeIngredientAmountSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
-    measurement_unit = serializers.ReadOnlyField(source='ingredient.measurement_unit')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit'
+    )
 
     class Meta:
         model = RecipeIngredientAmount

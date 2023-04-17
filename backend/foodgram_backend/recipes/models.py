@@ -14,7 +14,7 @@ class Ingredient(models.Model):
         verbose_name='Единица измерения',
         default="кг"
     )
-    
+
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
@@ -118,7 +118,7 @@ class Favourite(models.Model):
         on_delete=models.CASCADE,
         related_name='favourite'
     )
-    
+
     class Meta:
         verbose_name = 'Избранное'
         constraints = [
@@ -150,7 +150,7 @@ class ShoppingCart(models.Model):
         verbose_name = 'Корзина покупок'
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'],
-                             name='unique_shopping_cart')
+                                    name='unique_shopping_cart')
         ]
 
     def __str__(self):
