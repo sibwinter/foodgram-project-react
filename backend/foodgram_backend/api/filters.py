@@ -3,19 +3,11 @@ from django_filters import rest_framework
 from recipes.models import Favourite, Recipes, ShoppingCart, Tag
 
 
-CHOICES_LIST = (
-    ('0', 'False'),
-    ('1', 'True')
-)
-
-
 class RecipeFilter(rest_framework.FilterSet):
-    is_favorited = rest_framework.ChoiceFilter(
-        choices=CHOICES_LIST,
+    is_favorited = rest_framework.BooleanFilter(
         method='is_favorited_method'
     )
-    is_in_shopping_cart = rest_framework.ChoiceFilter(
-        choices=CHOICES_LIST,
+    is_in_shopping_cart = rest_framework.BooleanFilter(
         method='is_in_shopping_cart_method'
     )
     author = rest_framework.NumberFilter(
@@ -32,8 +24,8 @@ class RecipeFilter(rest_framework.FilterSet):
         if self.request.user.is_anonymous:
             return Recipes.objects.none()
 
-        favorites = Favourite.objects.filter(user=self.request.user)
-        recipes = [item.recipe.id for item in favorites]
+        favorites = self.request.user.favourite
+        recipes = Favourite.objects.values_list("id", flat=True)
         new_queryset = queryset.filter(id__in=recipes)
 
         if not strtobool(value):
