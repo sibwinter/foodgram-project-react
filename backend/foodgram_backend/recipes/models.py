@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.core.validators import MinValueValidator
 
 User = get_user_model()
 
@@ -20,7 +21,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return self.name[:15]
+        return self.name
 
 
 class Tag(models.Model):
@@ -58,6 +59,7 @@ class Recipes(models.Model):
     )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления, мин',
+        validators=[MinValueValidator(1), ]
     )
     author = models.ForeignKey(
         User,
@@ -89,6 +91,7 @@ class RecipeIngredientAmount(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
+        related_name='+',
     )
     recipe = models.ForeignKey(
 
@@ -115,8 +118,7 @@ class Favourite(models.Model):
     )
     recipe = models.ForeignKey(
         Recipes,
-        on_delete=models.CASCADE,
-        related_name='favourite'
+        on_delete=models.CASCADE
     )
 
     class Meta:
@@ -142,7 +144,6 @@ class ShoppingCart(models.Model):
     recipe = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='shopping_cart',
         verbose_name='Рецепт'
     )
 
