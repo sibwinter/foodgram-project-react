@@ -10,6 +10,7 @@ from djoser.views import UserViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
+from djoser.serializers import SetPasswordSerializer
 
 from .serializers import (RecipeSerializer,
                           TagSerializer,
@@ -24,7 +25,7 @@ from recipes.models import (RecipeIngredientAmount,
 from .serializers import (CustomUserCreateSerializer,
                           CustomUserSerializer, FollowSerializer,
                           RecipeCreateUpdateSerializer,
-                          SetPasswordSerializer, ShortRecipeSerializer)
+                          ShortRecipeSerializer)
 
 
 class CustomUserViewSet(UserViewSet):

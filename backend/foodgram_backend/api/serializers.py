@@ -22,22 +22,18 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             'last_name',
             'password'
         )
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        user = User.objects.create(
-            email=validated_data['email'],
-            username=validated_data['username'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
-
+       
 
 class CustomUserSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subscribed',
+        read_only=True)
+
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return Follow.objects.filter(user=user, author=obj.id).exists()
 
     class Meta:
         fields = (
@@ -48,48 +44,6 @@ class CustomUserSerializer(UserSerializer):
             'last_name',
             'is_subscribed')
         model = User
-
-    def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return Follow.objects.filter(user=user, author=obj.id).exists()
-
-
-class SetPasswordSerializer(serializers.Serializer):
-    """Set password for User model Serializer."""
-    current_password = serializers.CharField()
-    new_password = serializers.CharField()
-
-    def validate(self, data):
-        new_password = data.get('new_password')
-        try:
-            validate_password(new_password)
-        except exceptions.ValidationError as err:
-            raise serializers.ValidationError(
-                {'new_password': err.messages}
-            )
-        return super().validate(data)
-
-    def update(self, instance, validated_data):
-        current_password = validated_data.get('current_password')
-        new_password = validated_data.get('new_password')
-        if not instance.check_password(current_password):
-            raise serializers.ValidationError(
-                {
-                    'current_password': 'Wrong password'
-                }
-            )
-        if current_password == new_password:
-            raise serializers.ValidationError(
-                {
-                    'new_password': 'The new password must be different from '
-                                    'the current password'
-                }
-            )
-        instance.set_password(new_password)
-        instance.save()
-        return validated_data
 
 
 class FollowSerializer(CustomUserSerializer):
@@ -113,7 +67,10 @@ class FollowSerializer(CustomUserSerializer):
         recipes = obj.recipes.all()
         recipes_limit = request.query_params.get('recipes_limit')
         if recipes_limit:
-            recipes = recipes[:int(recipes_limit)]
+            try:
+                recipes = recipes[:int(recipes_limit)]
+            except ValueError as error:
+                print(error, 'не удалось предобразовать в число параметр recipes_limit')
         return ShortRecipeSerializer(recipes, many=True).data
 
 
@@ -260,10 +217,11 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             amount = ingredient['amount']
             ingredient = get_object_or_404(Ingredient, pk=ingredient['id'])
 
-            RecipeIngredientAmount.objects.create(
-                recipe=recipe,
-                ingredient=ingredient,
-                amount=amount
+            RecipeIngredientAmount.objects.bulk_create([
+                RecipeIngredientAmount(recipe=recipe,
+                                       ingredient=ingredient,
+                                       amount=amount)
+                ]                
             )
 
         return recipe
