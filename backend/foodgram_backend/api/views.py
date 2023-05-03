@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
-from requests import Response
 from rest_framework import viewsets, status, exceptions
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -22,54 +21,9 @@ from users.models import Follow, User
 from recipes.models import (RecipeIngredientAmount,
                             Recipes, ShoppingCart,
                             Tag, Ingredient, Favourite)
-from .serializers import (CustomUserCreateSerializer,
-                          CustomUserSerializer, FollowSerializer,
+from .serializers import (FollowSerializer,
                           RecipeCreateUpdateSerializer,
                           ShortRecipeSerializer)
-
-
-class CustomUserViewSet(UserViewSet):
-    queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get_serializer_class(self):
-        if self.action in ('subscriptions', 'subscribe'):
-            return FollowSerializer
-        if self.action in ('list', 'retrieve', 'me'):
-            return CustomUserSerializer
-        if self.action == 'set_password':
-            return SetPasswordSerializer
-        return CustomUserCreateSerializer
-
-    @action(
-        detail=False,
-        methods=['GET'],
-        permission_classes=[IsAuthenticated]
-    )
-    def me(self, request):
-        user = request.user
-        serializer = self.get_serializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @action(
-        detail=False,
-        methods=['POST'],
-        permission_classes=[IsAuthenticated]
-    )
-    def set_password(self, request):
-        user = request.user
-        data = request.data
-        serializer = self.get_serializer(user=user, data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-
-        return Response(
-            {
-                'detail': 'Пароль успешно изменен'
-            },
-            status=status.HTTP_204_NO_CONTENT
-        )
 
 
 class FollowViewSet(APIView):

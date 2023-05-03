@@ -48,17 +48,16 @@ class Tag(models.Model):
 class Recipes(models.Model):
 
     name = models.CharField(max_length=200, verbose_name='Название рецепта')
-    slug = models.SlugField(
-        max_length=200,
-        verbose_name='Уникальное имя рецепта',
-        unique=True,
-    )
     pub_date = models.DateTimeField(
         verbose_name='Дата',
         help_text='Укажите дату публикции',
         auto_now_add=True)
     text = models.TextField(
-        verbose_name='Описание рецепта',
+        verbose_name='Описание рецепта',    slug = models.SlugField(
+        max_length=200,
+        verbose_name='Уникальное имя рецепта',
+        unique=True,
+    )
         null=True,
     )
     cooking_time = models.PositiveSmallIntegerField(
@@ -102,7 +101,7 @@ class RecipeIngredientAmount(models.Model):
         Recipes,
         on_delete=models.CASCADE
     )
-    amount = models.SmallIntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name="Количество"
     )
 
@@ -122,7 +121,8 @@ class Favourite(models.Model):
     )
     recipe = models.ForeignKey(
         Recipes,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='+',
     )
 
     class Meta:
@@ -148,7 +148,8 @@ class ShoppingCart(models.Model):
     recipe = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        verbose_name='Рецепт'
+        verbose_name='Рецепт',
+        related_name='+',
     )
 
     class Meta:

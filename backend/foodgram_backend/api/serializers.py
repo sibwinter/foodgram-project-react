@@ -9,20 +9,7 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from recipes.models import Recipes, Ingredient, Favourite, ShoppingCart, User
 from recipes.models import Tag, RecipeIngredientAmount
 from users.models import Follow
-
-
-class CustomUserCreateSerializer(UserCreateSerializer):
-    class Meta:
-        model = User
-        fields = (
-            'email',
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'password'
-        )
-       
+  
 
 class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField(
