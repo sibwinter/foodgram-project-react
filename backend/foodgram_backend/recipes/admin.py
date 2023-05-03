@@ -5,8 +5,8 @@ from recipes.models import Recipes, Tag, Ingredient, RecipeIngredientAmount, Fav
 
 @admin.register(Recipes)
 class RecipesAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'slug',)
-    list_filter = ('name', 'slug',)
+    list_display = ('pk', 'name',)
+    list_filter = ('name', )
 
 
 @admin.register(Tag)

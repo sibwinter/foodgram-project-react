@@ -5,11 +5,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, exceptions
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from djoser.views import UserViewSet
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
-from djoser.serializers import SetPasswordSerializer
+from rest_framework.response import Response
 
 from .serializers import (RecipeSerializer,
                           TagSerializer,

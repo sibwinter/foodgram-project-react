@@ -1,17 +1,16 @@
-from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
 from django.core.validators import MinValueValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
-from djoser.serializers import UserCreateSerializer, UserSerializer
+from djoser.serializers import UserSerializer
 
 from recipes.models import Recipes, Ingredient, Favourite, ShoppingCart, User
 from recipes.models import Tag, RecipeIngredientAmount
 from users.models import Follow
   
 
-class CustomUserSerializer(UserSerializer):
+class CurrentUserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField(
         method_name='get_is_subscribed',
         read_only=True)
@@ -33,7 +32,7 @@ class CustomUserSerializer(UserSerializer):
         model = User
 
 
-class FollowSerializer(CustomUserSerializer):
+class FollowSerializer(CurrentUserSerializer):
     """
     Сериализатор для вывода подписок пользователя
     """
@@ -113,7 +112,7 @@ class CreateUpdateRecipeIngredientsSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    author = CustomUserSerializer(read_only=True)
+    author = CurrentUserSerializer(read_only=True)
     tags = TagSerializer(many=True)
     ingredients = serializers.SerializerMethodField(
         method_name='get_ingredients'
@@ -153,7 +152,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
-    author = CustomUserSerializer(read_only=True)
+    author = CurrentUserSerializer(read_only=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True

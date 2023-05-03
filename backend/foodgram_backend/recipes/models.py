@@ -53,11 +53,7 @@ class Recipes(models.Model):
         help_text='Укажите дату публикции',
         auto_now_add=True)
     text = models.TextField(
-        verbose_name='Описание рецепта',    slug = models.SlugField(
-        max_length=200,
-        verbose_name='Уникальное имя рецепта',
-        unique=True,
-    )
+        verbose_name='Описание рецепта',
         null=True,
     )
     cooking_time = models.PositiveSmallIntegerField(
@@ -121,8 +117,7 @@ class Favourite(models.Model):
     )
     recipe = models.ForeignKey(
         Recipes,
-        on_delete=models.CASCADE,
-        related_name='+',
+        on_delete=models.CASCADE
     )
 
     class Meta:
