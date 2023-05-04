@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from  django.core.validators import RegexValidator
 from django.db import models
 from django.core.validators import MinValueValidator
 
@@ -29,7 +30,13 @@ class Tag(models.Model):
     color = models.CharField(
         max_length=7,
         default="#ffffff",
-        
+        validators=[
+            RegexValidator(
+                regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+                message='Введите код цвета в формате HEX',
+                code='invalid_hex_code'
+            ),
+        ]        
     )
     slug = models.SlugField(
         max_length=200,
@@ -44,6 +51,24 @@ class Tag(models.Model):
     def __str__(self):
         return self.name[:15]
 
+
+class IngredientAmount(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='+',
+    )
+    amount = models.PositiveSmallIntegerField(
+        verbose_name="Количество"
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиенты в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
+
+    def __str__(self):
+        return 'Количество игредиента  в рецепте'
+    
 
 class Recipes(models.Model):
 
@@ -71,8 +96,7 @@ class Recipes(models.Model):
         related_name='recipes'
     )
     ingredients = models.ManyToManyField(
-        Ingredient,
-        through='RecipeIngredientAmount',
+        IngredientAmount,
         related_name='recipes',
         verbose_name='Ингредиенты')
     image = models.ImageField(upload_to='uploads/')
@@ -92,11 +116,6 @@ class RecipeIngredientAmount(models.Model):
         on_delete=models.CASCADE,
         related_name='+',
     )
-    recipe = models.ForeignKey(
-
-        Recipes,
-        on_delete=models.CASCADE
-    )
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество"
     )
@@ -106,7 +125,7 @@ class RecipeIngredientAmount(models.Model):
         verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
-        return 'Количество игредиента  в рецепте'
+        return f'{self.ingredient} - {self.amount}'
 
 
 class Favourite(models.Model):
