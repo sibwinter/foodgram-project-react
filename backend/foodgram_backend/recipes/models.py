@@ -67,7 +67,7 @@ class IngredientAmount(models.Model):
         verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
-        return 'Количество игредиента  в рецепте'
+        return f'{self.ingredient} - {self.amount}'
     
 
 class Recipes(models.Model):
@@ -108,24 +108,6 @@ class Recipes(models.Model):
 
     def __str__(self):
         return self.name[:15]
-
-
-class RecipeIngredientAmount(models.Model):
-    ingredient = models.ForeignKey(
-        Ingredient,
-        on_delete=models.CASCADE,
-        related_name='+',
-    )
-    amount = models.PositiveSmallIntegerField(
-        verbose_name="Количество"
-    )
-
-    class Meta:
-        verbose_name = 'Ингредиенты в рецепте'
-        verbose_name_plural = 'Ингредиенты в рецепте'
-
-    def __str__(self):
-        return f'{self.ingredient} - {self.amount}'
 
 
 class Favourite(models.Model):

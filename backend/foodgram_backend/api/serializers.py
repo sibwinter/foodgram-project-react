@@ -6,7 +6,7 @@ from drf_extra_fields.fields import Base64ImageField
 from djoser.serializers import UserSerializer
 
 from recipes.models import Recipes, Ingredient, Favourite, ShoppingCart, User
-from recipes.models import Tag, RecipeIngredientAmount
+from recipes.models import Tag, IngredientAmount
 from users.models import Follow
   
 
@@ -91,7 +91,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
         return obj.ingredient.measurement_unit
 
     class Meta:
-        model = RecipeIngredientAmount
+        model = IngredientAmount
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 

@@ -16,7 +16,7 @@ from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .pagination import CustomPageNumberPagination
 from .filters import RecipeFilter
 from users.models import Follow, User
-from recipes.models import (RecipeIngredientAmount,
+from recipes.models import (IngredientAmount,
                             Recipes, ShoppingCart,
                             Tag, Ingredient, Favourite)
 from .serializers import (FollowSerializer,
@@ -193,7 +193,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         recipes = [item.recipe.id for item in shopping_cart]
-        buy_list = RecipeIngredientAmount.objects.filter(
+        buy_list = IngredientAmount.objects.filter(
             recipe__in=recipes
         ).values(
             'ingredient'
