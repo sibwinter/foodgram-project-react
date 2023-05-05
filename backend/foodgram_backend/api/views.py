@@ -17,7 +17,7 @@ from .pagination import CustomPageNumberPagination
 from .filters import RecipeFilter
 from users.models import Follow, User
 from recipes.models import (IngredientAmount,
-                            Recipes, ShoppingCart,
+                            Recipe, ShoppingCart,
                             Tag, Ingredient, Favourite)
 from .serializers import (FollowSerializer,
                           RecipeCreateUpdateSerializer,
@@ -95,7 +95,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipes.objects.all()
+    queryset = Recipe.objects.all()
     permission_classes = (IsAdminOrReadOnly, IsAuthorOrReadOnly)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
@@ -110,7 +110,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=('post', 'delete'))
     def favorite(self, request, pk=None):
         user = self.request.user
-        recipe = get_object_or_404(Recipes, pk=pk)
+        recipe = get_object_or_404(Recipe, pk=pk)
 
         if self.request.method == 'POST':
             if Favourite.objects.filter(
@@ -146,7 +146,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=('post', 'delete'))
     def shopping_cart(self, request, pk=None):
         user = self.request.user
-        recipe = get_object_or_404(Recipes, pk=pk)
+        recipe = get_object_or_404(Recipe, pk=pk)
 
         if self.request.method == 'POST':
             if ShoppingCart.objects.filter(

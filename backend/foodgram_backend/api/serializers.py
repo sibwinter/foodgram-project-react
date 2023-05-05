@@ -5,7 +5,7 @@ from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from djoser.serializers import UserSerializer
 
-from recipes.models import Recipes, Ingredient, Favourite, ShoppingCart, User
+from recipes.models import Recipe, Ingredient, Favourite, ShoppingCart, User
 from recipes.models import Tag, IngredientAmount
 from users.models import Follow
   
@@ -14,12 +14,6 @@ class CurrentUserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField(
         method_name='get_is_subscribed',
         read_only=True)
-
-    def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return Follow.objects.filter(user=user, author=obj.id).exists()
 
     class Meta:
         fields = (
@@ -31,7 +25,13 @@ class CurrentUserSerializer(serializers.ModelSerializer):
             'is_subscribed')
         model = User
 
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return Follow.objects.filter(user=user, author=obj.id).exists()
 
+    
 class FollowSerializer(CurrentUserSerializer):
     """
     Сериализатор для вывода подписок пользователя
@@ -125,7 +125,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
 
     def get_ingredients(self, obj):
-        ingredients = RecipeIngredientAmount.objects.filter(recipe=obj)
+        ingredients = IngredientAmount.objects.filter(recipe=obj)
         serializer = RecipeIngredientsSerializer(ingredients, many=True)
 
         return serializer.data
@@ -147,7 +147,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return ShoppingCart.objects.filter(user=user, recipe=obj).exists()
 
     class Meta:
-        model = Recipes
+        model = Recipe
         exclude = ('pub_date',)
 
 
@@ -196,17 +196,16 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
 
-        recipe = Recipes.objects.create(author=author, **validated_data)
+        recipe = Recipe.objects.create(author=author, **validated_data)
         recipe.tags.set(tags)
 
         for ingredient in ingredients:
             amount = ingredient['amount']
             ingredient = get_object_or_404(Ingredient, pk=ingredient['id'])
 
-            RecipeIngredientAmount.objects.bulk_create([
-                RecipeIngredientAmount(recipe=recipe,
-                                       ingredient=ingredient,
-                                       amount=amount)
+            IngredientAmount.objects.bulk_create([
+                IngredientAmount(ingredient=ingredient,
+                                 amount=amount)
                 ]                
             )
 
@@ -225,8 +224,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
                 amount = ingredient['amount']
                 ingredient = get_object_or_404(Ingredient, pk=ingredient['id'])
 
-                RecipeIngredientAmount.objects.update_or_create(
-                    recipe=instance,
+                IngredientAmount.objects.update_or_create(
                     ingredient=ingredient,
                     defaults={'amount': amount}
                 )
@@ -242,12 +240,12 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         return serializer.data
 
     class Meta:
-        model = Recipes
+        model = Recipe
         exclude = ('pub_date',)
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')

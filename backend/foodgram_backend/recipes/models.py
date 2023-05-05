@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from  django.core.validators import RegexValidator
+from django.core.validators import RegexValidator
 from django.db import models
 from django.core.validators import MinValueValidator
 
@@ -32,11 +32,11 @@ class Tag(models.Model):
         default="#ffffff",
         validators=[
             RegexValidator(
-                regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+                regex='^#([A-Fa-f0-9]{3,6})$',
                 message='Введите код цвета в формате HEX',
                 code='invalid_hex_code'
             ),
-        ]        
+        ],        
     )
     slug = models.SlugField(
         max_length=200,
@@ -52,25 +52,8 @@ class Tag(models.Model):
         return self.name[:15]
 
 
-class IngredientAmount(models.Model):
-    ingredient = models.ForeignKey(
-        Ingredient,
-        on_delete=models.CASCADE,
-        related_name='+',
-    )
-    amount = models.PositiveSmallIntegerField(
-        verbose_name="Количество"
-    )
 
-    class Meta:
-        verbose_name = 'Ингредиенты в рецепте'
-        verbose_name_plural = 'Ингредиенты в рецепте'
-
-    def __str__(self):
-        return f'{self.ingredient} - {self.amount}'
-    
-
-class Recipes(models.Model):
+class Recipe(models.Model):
 
     name = models.CharField(max_length=200, verbose_name='Название рецепта')
     pub_date = models.DateTimeField(
@@ -88,17 +71,13 @@ class Recipes(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='recipes'
+        related_name='recipe'
     )
     tags = models.ManyToManyField(
         Tag,
         verbose_name='список тэгов',
-        related_name='recipes'
+        related_name='recipe'
     )
-    ingredients = models.ManyToManyField(
-        IngredientAmount,
-        related_name='recipes',
-        verbose_name='Ингредиенты')
     image = models.ImageField(upload_to='uploads/')
 
     class Meta:
@@ -110,6 +89,30 @@ class Recipes(models.Model):
         return self.name[:15]
 
 
+class IngredientAmount(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='ingrediens',
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='+',
+    )
+    amount = models.PositiveSmallIntegerField(
+        verbose_name="Количество"
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиенты в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
+
+    def __str__(self):
+        return f'{self.ingredient} - {self.amount}'
+    
+
+
 class Favourite(models.Model):
     user = models.ForeignKey(
         User,
@@ -117,7 +120,7 @@ class Favourite(models.Model):
         related_name='favourite'
     )
     recipe = models.ForeignKey(
-        Recipes,
+        Recipe,
         on_delete=models.CASCADE
     )
 
@@ -142,7 +145,7 @@ class ShoppingCart(models.Model):
         verbose_name='пользователь'
     )
     recipe = models.ForeignKey(
-        Recipes,
+        Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
         related_name='+',
