@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from django.db import models
 from django.core.validators import MinValueValidator
 
@@ -29,7 +30,13 @@ class Tag(models.Model):
     color = models.CharField(
         max_length=7,
         default="#ffffff",
-        
+        validators=[
+            RegexValidator(
+                regex='^#([A-Fa-f0-9]{3,6})$',
+                message='Введите код цвета в формате HEX',
+                code='invalid_hex_code'
+            ),
+        ],        
     )
     slug = models.SlugField(
         max_length=200,
@@ -45,7 +52,8 @@ class Tag(models.Model):
         return self.name[:15]
 
 
-class Recipes(models.Model):
+
+class Recipe(models.Model):
 
     name = models.CharField(max_length=200, verbose_name='Название рецепта')
     pub_date = models.DateTimeField(
@@ -63,18 +71,13 @@ class Recipes(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='recipes'
+        related_name='recipe'
     )
     tags = models.ManyToManyField(
         Tag,
         verbose_name='список тэгов',
-        related_name='recipes'
+        related_name='recipe'
     )
-    ingredients = models.ManyToManyField(
-        Ingredient,
-        through='RecipeIngredientAmount',
-        related_name='recipes',
-        verbose_name='Ингредиенты')
     image = models.ImageField(upload_to='uploads/')
 
     class Meta:
@@ -86,16 +89,16 @@ class Recipes(models.Model):
         return self.name[:15]
 
 
-class RecipeIngredientAmount(models.Model):
+class IngredientAmount(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='ingrediens',
+    )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
         related_name='+',
-    )
-    recipe = models.ForeignKey(
-
-        Recipes,
-        on_delete=models.CASCADE
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество"
@@ -116,7 +119,7 @@ class Favourite(models.Model):
         related_name='favourite'
     )
     recipe = models.ForeignKey(
-        Recipes,
+        Recipe,
         on_delete=models.CASCADE
     )
 
@@ -141,7 +144,7 @@ class ShoppingCart(models.Model):
         verbose_name='пользователь'
     )
     recipe = models.ForeignKey(
-        Recipes,
+        Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
         related_name='+',

@@ -16,8 +16,8 @@ from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .pagination import CustomPageNumberPagination
 from .filters import RecipeFilter
 from users.models import Follow, User
-from recipes.models import (RecipeIngredientAmount,
-                            Recipes, ShoppingCart,
+from recipes.models import (IngredientAmount,
+                            Recipe, ShoppingCart,
                             Tag, Ingredient, Favourite)
 from .serializers import (FollowSerializer,
                           RecipeCreateUpdateSerializer,
@@ -95,7 +95,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipes.objects.all()
+    queryset = Recipe.objects.all()
     permission_classes = (IsAdminOrReadOnly, IsAuthorOrReadOnly)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
@@ -110,7 +110,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=('post', 'delete'))
     def favorite(self, request, pk=None):
         user = self.request.user
-        recipe = get_object_or_404(Recipes, pk=pk)
+        recipe = get_object_or_404(Recipe, pk=pk)
 
         if self.request.method == 'POST':
             if Favourite.objects.filter(
@@ -146,7 +146,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=('post', 'delete'))
     def shopping_cart(self, request, pk=None):
         user = self.request.user
-        recipe = get_object_or_404(Recipes, pk=pk)
+        recipe = get_object_or_404(Recipe, pk=pk)
 
         if self.request.method == 'POST':
             if ShoppingCart.objects.filter(
@@ -193,7 +193,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         recipes = [item.recipe.id for item in shopping_cart]
-        buy_list = RecipeIngredientAmount.objects.filter(
+        buy_list = IngredientAmount.objects.filter(
             recipe__in=recipes
         ).values(
             'ingredient'

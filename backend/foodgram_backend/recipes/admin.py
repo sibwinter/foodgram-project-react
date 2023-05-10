@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from recipes.models import Recipes, Tag, Ingredient, RecipeIngredientAmount, Favourite, ShoppingCart
+from recipes.models import Recipe, Tag, Ingredient, IngredientAmount, Favourite, ShoppingCart
 
 
-@admin.register(Recipes)
+@admin.register(Recipe)
 class RecipesAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name',)
     list_filter = ('name', )
@@ -20,10 +20,10 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', )
     list_filter = ('name', )
 
-@admin.register(RecipeIngredientAmount)
-class RecipeIngredientAmountAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'ingredient', 'recipe', 'amount',)
-    list_filter = ('recipe', )
+@admin.register(IngredientAmount)
+class IngredientAmountAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'ingredient', 'amount',)
+    list_filter = ('ingredient', )
 
 
 
