@@ -9,7 +9,7 @@ services:
       - ./.env
 
   backend:
-    image: sibwinter/foodgram_backend:v0.03
+    image: sibwinter/foodgram_backend:v0.04
     restart: always
     volumes:
       - static_value:/app/static/
@@ -23,6 +23,7 @@ services:
     image: sibwinter/infra_frontend:v0.01
     volumes:
       - ../frontend/:/app/result_build/
+
   nginx:
     image: nginx:1.19.3
     ports:
