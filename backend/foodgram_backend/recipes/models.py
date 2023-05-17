@@ -36,7 +36,7 @@ class Tag(models.Model):
                 message='Введите код цвета в формате HEX',
                 code='invalid_hex_code'
             ),
-        ],        
+        ],
     )
     slug = models.SlugField(
         max_length=200,
@@ -50,7 +50,6 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name[:15]
-
 
 
 class Recipe(models.Model):
