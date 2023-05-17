@@ -1,5 +1,5 @@
-from distutils.util import strtobool
 from django_filters import rest_framework
+from distutils.util import strtobool
 
 from recipes.models import Favourite, Recipe, ShoppingCart, Tag
 

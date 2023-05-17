@@ -17,6 +17,7 @@ def import_ingredients(row):
         measurement_unit=row['measurement_unit']
     )
 
+
 DATA_CSV = {
     import_ingredients: 'data/ingredients.csv',
 }
@@ -30,8 +31,10 @@ class Command(BaseCommand):
             self.style.SUCCESS(("Загружаем данные в базу..."))
         )
         for method, file_path in DATA_CSV.items():
-            for row in DictReader(open(f'{settings.BASE_DIR.parent.parent}/{file_path}',
-                                  encoding='utf-8')):
+            for row in DictReader(
+                open(f'{settings.BASE_DIR.parent.parent}/{file_path}',
+                     encoding='utf-8')
+            ):
                 method(row)
             self.stdout.write(
                 self.style.SUCCESS(
