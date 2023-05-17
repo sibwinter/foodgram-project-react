@@ -49,7 +49,6 @@ jobs:
         # Пуш образа в Docker Hub 
         uses: docker/build-push-action@v2 
         with:
-          context: ./backend/foodgram_backend
-          file: Dockerfile
+          dockerfile: ./backend/foodgram_backend/Dockerfile
           push: true
           tags: sibwinter/foodgram_backend:latest 
