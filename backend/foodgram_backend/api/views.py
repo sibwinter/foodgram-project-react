@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from .serializers import (RecipeSerializer,
                           TagSerializer,
                           IngredientSerializer)
-from .permissions import IsAuthorOrAdminPermission
+from .permissions import IsAdminOrReadOnly, IsAuthorOrAdminPermission
 from .pagination import CustomPageNumberPagination
 from .filters import RecipeFilter
 from users.models import Follow, User
@@ -29,7 +29,7 @@ class FollowViewSet(APIView):
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPageNumberPagination
 
-    def post(self, request,  *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         user_id = self.kwargs.get('user_id')
         if user_id == request.user_id:
             return Response(
@@ -54,7 +54,7 @@ class FollowViewSet(APIView):
             status=status.HTTP_201_CREATED
         )
 
-    def delete(self, request,  *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         user_id = self.kwargs.get('user_id')
         subscription = Follow.objects.filter(
             user=request.user,

@@ -3,12 +3,11 @@ from django.core.validators import MinValueValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
-from djoser.serializers import UserSerializer
 
 from recipes.models import Recipe, Ingredient, Favourite, ShoppingCart, User
 from recipes.models import Tag, IngredientAmount
 from users.models import Follow
-  
+
 
 class CurrentUserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField(
@@ -31,7 +30,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
             return False
         return Follow.objects.filter(user=user, author=obj.id).exists()
 
-    
+
 class FollowSerializer(CurrentUserSerializer):
     """
     Сериализатор для вывода подписок пользователя
@@ -56,7 +55,9 @@ class FollowSerializer(CurrentUserSerializer):
             try:
                 recipes = recipes[:int(recipes_limit)]
             except ValueError as error:
-                print(error, 'не удалось предобразовать в число параметр recipes_limit')
+                print(
+                    error,
+                    'не удалось предобразовать в число параметр recipes_limit')
         return ShortRecipeSerializer(recipes, many=True).data
 
 
@@ -206,7 +207,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             IngredientAmount.objects.bulk_create([
                 IngredientAmount(ingredient=ingredient,
                                  amount=amount)
-                ]                
+            ]
             )
 
         return recipe
