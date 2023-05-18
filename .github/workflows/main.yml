@@ -80,4 +80,3 @@ jobs:
           echo PORT=${{ secrets.PORT }} >> .env
           echo SSH_KEY=${{ secrets.SSH_KEY }}
           sudo docker compose up -d
-
