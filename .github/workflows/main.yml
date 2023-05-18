@@ -79,5 +79,7 @@ jobs:
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           echo PORT=${{ secrets.PORT }} >> .env
           echo SSH_KEY=${{ secrets.SSH_KEY }}
+          echo DEBUG=${{ secrets.DEBUG }} >> .env
+          echo SERVERHOST=${{ secrets.SERVERHOST }} >> .env
           sudo docker compose up -d
 
