@@ -17,12 +17,14 @@ DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = [
     'http://localhost/*',
-    'http://217.144.102.201/*'
+    'http://217.144.102.201/*',
+    '127.0.0.1', 'localhost'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost/*',
-    'http://217.144.102.201/*'
+    'http://217.144.102.201/*',
+    '127.0.0.1', 'localhost'
 ]
 
 # Application definition
