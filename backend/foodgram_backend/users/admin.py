@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import Follow, User
 
+
 @admin.register(User)
 class UserAdmin(UserAdmin):
     list_display = (
@@ -13,6 +14,7 @@ class UserAdmin(UserAdmin):
         'last_name',
     )
     list_filter = ('email', 'first_name')
+
 
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
