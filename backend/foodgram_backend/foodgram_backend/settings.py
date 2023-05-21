@@ -10,15 +10,16 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = os.getenv('SECRET_KEY')
-#'django-insecure-$!3i@c43o#3yvb*9r-1g!%mtd+8uv##9y%@cz@wzt=*%#h97+s'
+SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-$!3i@c43o#3yvb*9r-1g!%mtd+8uv##9y%@cz@wzt=*%#h97+s')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = [
     'http://localhost/*',
-    'http://217.144.102.201/*'
+    'http://217.144.102.201/*',
+    'localhost',
+    '127.0.0.1'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
