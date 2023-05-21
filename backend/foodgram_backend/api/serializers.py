@@ -4,9 +4,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
-from recipes.models import Recipe, Ingredient, Favourite, ShoppingCart, User
+from recipes.models import Recipe, Ingredient, Favourite, ShoppingCart
 from recipes.models import Tag, IngredientAmount
-from users.models import Follow
+from users.models import Follow, User
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):
