@@ -10,7 +10,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-$!3i@c43o#3yvb*9r-1g!%mtd+8uv##9y%@cz@wzt=*%#h97+s')
+SECRET_KEY = 'django-insecure-$!3i@c43o#3yvb*9r-1g!%mtd+8uv##9y%@cz@wzt=*%#h97+s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'True'
@@ -87,12 +87,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', '5432')
     }
 }
-"""DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}"""
 
 
 # Password validation
@@ -140,7 +134,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'users.User'
+#AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
    'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -156,6 +150,7 @@ REST_FRAMEWORK = {
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'djoser.serializers.UserCreateSerializer',
+        'user': 'api.serializers.CurrentUserSerializer',
         'current_user': 'api.serializers.CurrentUserSerializer',
     },
 
