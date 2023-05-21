@@ -9,7 +9,7 @@ services:
       - ./.env
 
   backend:
-    image: sibwinter/foodgram_backend:v0.08
+    image: sibwinter/foodgram_backend:latest
     restart: always
     volumes:
       - static_value:/app/static/
