@@ -17,9 +17,7 @@ DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = [
     'http://localhost/*',
-    'http://217.144.102.201/*',
-    'localhost',
-    '127.0.0.1'
+    'http://217.144.102.201/*'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -89,6 +87,12 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', '5432')
     }
 }
+"""DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}"""
 
 
 # Password validation

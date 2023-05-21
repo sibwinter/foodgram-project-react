@@ -9,7 +9,7 @@ services:
       - ./.env
 
   backend:
-    image: sibwinter/foodgram_backend:latest
+    image: sibwinter/foodgram_backend:v0.08
     restart: always
     volumes:
       - static_value:/app/static/
@@ -20,7 +20,9 @@ services:
       - ./.env
 
   frontend:
-    image: sibwinter/infra_frontend:v0.01
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
@@ -31,9 +33,9 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ../docs/:/usr/share/nginx/html/api/docs/
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     depends_on:
