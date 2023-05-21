@@ -13,12 +13,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$!3i@c43o#3yvb*9r-1g!%mtd+8uv##9y%@cz@wzt=*%#h97+s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'http://localhost/*',
+    'http://217.144.102.201/*'
+]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost/*',
+    'http://217.144.102.201/*'
 ]
 
 # Application definition
@@ -146,7 +150,6 @@ REST_FRAMEWORK = {
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'djoser.serializers.UserCreateSerializer',
-        'user': 'api.serializers.CurrentUserSerializer',
         'current_user': 'api.serializers.CurrentUserSerializer',
     },
 
