@@ -15,12 +15,11 @@ SECRET_KEY = 'django-insecure-$!3i@c43o#3yvb*9r-1g!%mtd+8uv##9y%@cz@wzt=*%#h97+s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'True'
 
-
 ALLOWED_HOSTS = [
     'http://localhost/*',
     'http://217.144.102.201/*',
-    '127.0.0.1', 'localhost',
-    '217.144.102.201'
+    '217.144.102.201',
+    'localhost'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -90,6 +89,12 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', '5432')
     }
 }
+"""DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}"""
 
 
 # Password validation
@@ -153,7 +158,6 @@ REST_FRAMEWORK = {
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'djoser.serializers.UserCreateSerializer',
-        'user': 'api.serializers.CurrentUserSerializer',
         'current_user': 'api.serializers.CurrentUserSerializer',
     },
 
