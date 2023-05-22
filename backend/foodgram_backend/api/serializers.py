@@ -206,7 +206,8 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
             IngredientAmount.objects.bulk_create([
                 IngredientAmount(ingredient=ingredient,
-                                 amount=amount)
+                                 amount=amount,
+                                 recipe=recipe)
             ]
             )
 
@@ -227,6 +228,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
                 IngredientAmount.objects.update_or_create(
                     ingredient=ingredient,
+                    recipe=instance,
                     defaults={'amount': amount}
                 )
 
