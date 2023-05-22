@@ -20,7 +20,8 @@ ALLOWED_HOSTS = [
     'http://localhost/*',
     'http://217.144.102.201/*',
     '217.144.102.201',
-    'localhost'
+    'localhost',
+    'backend'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
