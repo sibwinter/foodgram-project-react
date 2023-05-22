@@ -84,15 +84,12 @@ class TagViewSet(viewsets.ModelViewSet):
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (IsAdminOrReadOnly,)
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
 
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
