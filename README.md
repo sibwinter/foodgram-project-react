@@ -23,7 +23,7 @@
 - Склонируйте проект из репозитория:
 
 ```sh
-$ git clone https://github.com/Mukhinart/foodgram-project-react.git
+$ git clone https://github.com/sibwinter/foodgram-project-react.git
 ```
 
 - Выполните вход на удаленный сервер
