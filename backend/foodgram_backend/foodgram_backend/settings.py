@@ -167,3 +167,5 @@ DJOSER = {
     },
     'HIDE_USERS': False,
 }
+
+MAX_EMAIL_LENGTH = 254
