@@ -118,7 +118,8 @@ class Favourite(models.Model):
     )
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='favourite'
     )
 
     class Meta:

@@ -33,6 +33,7 @@ class RecipeFilter(rest_framework.FilterSet):
         model = Recipe
         fields = ('author', 'tags')
 
+
     def is_favorited_method(self, queryset, name, value):
         if self.request.user.is_anonymous:
             return Recipe.objects.none()
