@@ -1,7 +1,15 @@
 from django_filters import rest_framework
 from distutils.util import strtobool
 
-from recipes.models import Favourite, Recipe, ShoppingCart, Tag
+from recipes.models import Favourite, Recipe, ShoppingCart, Tag, Ingredient
+
+
+class IngredientFilter(rest_framework.FilterSet):
+    name = rest_framework.filters.CharFilter(lookup_expr='startswith')
+
+    class Meta:
+        model = Ingredient
+        fields = ('name',)
 
 
 class RecipeFilter(rest_framework.FilterSet):
