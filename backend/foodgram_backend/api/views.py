@@ -25,7 +25,7 @@ from .serializers import (FollowSerializer,
                           ShortRecipeSerializer)
 
 
-class UserCustomViewSet(UserViewSet):
+class CurrentUserViewSet(UserViewSet):
     """Кастомизированный вьюсет библиотеки 'djoser'."""
 
     pagination_class = CustomPageNumberPagination
