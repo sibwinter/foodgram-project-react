@@ -4,13 +4,13 @@ from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import (viewsets, status,
-                            exceptions, permissions, serializers)
+                            exceptions, permissions,
+                            serializers)
 from rest_framework.decorators import action
-from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .serializers import (RecipeSerializer, SubscriptionCreateSerializer,
+from .serializers import (RecipeSerializer,
                           TagSerializer,
                           IngredientSerializer)
 from .permissions import IsAuthorOrAdminPermission
@@ -26,7 +26,8 @@ from .serializers import (SubscriptionSerializer,
 
 
 class CurrentUserViewSet(UserViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    """Кастомизированный вьюсет библиотеки 'djoser'."""
+
     pagination_class = CustomPageNumberPagination
 
     @action(
@@ -35,13 +36,12 @@ class CurrentUserViewSet(UserViewSet):
     )
     def subscriptions(self, request):
         user = self.request.user
-        user_subscriptions = user.follower.all()
-        authors = [item.author.id for item in user_subscriptions]
-        queryset = User.objects.filter(pk__in=authors)
-        paginated_queryset = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(paginated_queryset, many=True)
 
-        return self.get_paginated_response(serializer.data)
+        def queryset():
+            return User.objects.filter(subscriber__user=user)
+
+        self.get_queryset = queryset
+        return self.list(request)
 
     @action(
         methods=['post', 'delete'], detail=True,
