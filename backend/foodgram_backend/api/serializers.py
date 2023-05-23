@@ -57,7 +57,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         limit = self.context['request'].query_params.get(
             'recipes_limit', settings.COUNT_RECIPES_DEFAULT
         )
-        recipes = obj.recipes.all()[:int(limit)]
+        recipes = obj.recipe.all()[:int(limit)]
         return ShortRecipeSerializer(recipes, many=True).data
 
     def get_is_subscribed(self, obj):
@@ -65,7 +65,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         return bool(obj.following.filter(user=user))
 
     def get_recipes_count(self, obj):
-        return obj.recipes.count()
+        return obj.recipe.count()
 
 
 class SubscriptionCreateSerializer(serializers.ModelSerializer):
