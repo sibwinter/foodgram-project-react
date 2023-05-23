@@ -32,7 +32,8 @@ class CurrentUserViewSet(UserViewSet):
 
     @action(
         methods=['get'], detail=False,
-        serializer_class=SubscriptionSerializer
+        serializer_class=SubscriptionSerializer,
+        permission_classes=(IsAuthenticated, )
     )
     def subscriptions(self, request):
         user = self.request.user
