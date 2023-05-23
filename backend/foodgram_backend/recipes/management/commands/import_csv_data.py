@@ -19,7 +19,7 @@ def import_ingredients(row):
 
 
 DATA_CSV = {
-    import_ingredients: 'data/ingredients.csv',
+    import_ingredients: 'ingredients.csv',
 }
 
 
@@ -32,7 +32,7 @@ class Command(BaseCommand):
         )
         for method, file_path in DATA_CSV.items():
             for row in DictReader(
-                open(f'{settings.BASE_DIR.parent.parent}/{file_path}',
+                open(f'{settings.BASE_DIR}/{file_path}',
                      encoding='utf-8')
             ):
                 method(row)
