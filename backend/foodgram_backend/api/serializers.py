@@ -62,7 +62,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
-        return bool(obj.subscriber.filter(user=user))
+        return bool(obj.following.filter(user=user))
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
