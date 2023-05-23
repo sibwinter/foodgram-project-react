@@ -430,16 +430,16 @@ POST /api/recipes/
 
 ***
 
-Проект развернут по IP [178.154.203.148](http://178.154.203.148/)
+Проект развернут по IP [217.144.102.201](http://217.144.102.201/)
 
 Доступ в админ-панель:
 
 ```sh
-http://178.154.203.148/admin
-login: admin (admin@food.food)
-pass: admin123
+http://217.144.102.201/admin
+login: admin (admin@admin.ru)
+pass: admin
 ```
 
 ### Автор
 
-Артём Мухин
+Денис Середин

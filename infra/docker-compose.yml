@@ -12,8 +12,7 @@ services:
     image: sibwinter/foodgram_backend:v0.08
     restart: always
     volumes:
-      - static_value:/app/static/
-      - media_value:/app/media/
+      - static_value:/app/static/пше 
     depends_on:
       - db
     env_file:
