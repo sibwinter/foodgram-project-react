@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .serializers import (RecipeSerializer, SubscriptionCreateSerializer,
+from .serializers import (RecipeSerializer,
                           TagSerializer,
                           IngredientSerializer)
 from .permissions import IsAuthorOrAdminPermission
