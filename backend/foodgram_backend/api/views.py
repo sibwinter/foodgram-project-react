@@ -25,7 +25,7 @@ from .serializers import (SubscriptionSerializer,
                           ShortRecipeSerializer)
 
 
-class CustomUserViewSet(UserViewSet):
+class CurrentUserViewSet(UserViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     pagination_class = CustomPageNumberPagination
 
