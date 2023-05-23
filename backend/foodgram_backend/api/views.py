@@ -90,13 +90,14 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    filterset_class = IngredientFilter
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrAdminPermission,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = (RecipeFilter, IngredientFilter,)
+    filterset_class = (RecipeFilter, ,)
     pagination_class = CustomPageNumberPagination
 
     def get_serializer_class(self):
