@@ -35,12 +35,13 @@ class CurrentUserViewSet(UserViewSet):
     )
     def subscriptions(self, request):
         user = self.request.user
+        user_subscriptions = user.following.all()
+        authors = [item.author.id for item in user_subscriptions]
+        queryset = User.objects.filter(pk__in=authors)
+        paginated_queryset = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(paginated_queryset, many=True)
 
-        def queryset():
-            return User.objects.filter(author__user=user)
-
-        self.get_queryset = queryset
-        return self.list(request)
+        return self.get_paginated_response(serializer.data)
 
     @action(
         methods=['post', 'delete'], detail=True,
