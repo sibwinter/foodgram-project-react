@@ -53,7 +53,7 @@ class CurrentUserViewSet(UserViewSet):
         user = self.request.user
         author = self.get_object()
         if request.method == 'DELETE':
-            instance = user.following.filter(author=author)
+            instance = user.follower.filter(author=author)
             if not instance:
                 raise serializers.ValidationError(
                     {
