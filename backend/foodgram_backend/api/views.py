@@ -4,19 +4,19 @@ from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import (viewsets, status,
-                            exceptions, permissions,)
+                            exceptions, permissions, serializers)
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
-from .serializers import (RecipeSerializer,
+from .serializers import (RecipeSerializer, SubscriptionCreateSerializer,
                           TagSerializer,
                           IngredientSerializer)
 from .permissions import IsAuthorOrAdminPermission
 from .pagination import CustomPageNumberPagination
 from .filters import IngredientFilter, RecipeFilter
-from users.models import Follow, User
+from users.models import User
 from recipes.models import (IngredientAmount,
                             Recipe, ShoppingCart,
                             Tag, Ingredient, Favourite)
@@ -30,65 +30,46 @@ class CurrentUserViewSet(UserViewSet):
     pagination_class = CustomPageNumberPagination
 
     @action(
-        detail=False,
-        methods=('get',),
-        serializer_class=SubscriptionSerializer,
-        permission_classes=(IsAuthenticated, )
+        methods=['get'], detail=False,
+        serializer_class=SubscriptionSerializer
     )
     def subscriptions(self, request):
         user = self.request.user
-        user_subscriptions = user.subscribes.all()
-        authors = [item.author.id for item in user_subscriptions]
-        queryset = User.objects.filter(pk__in=authors)
-        paginated_queryset = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(paginated_queryset, many=True)
 
-        return self.get_paginated_response(serializer.data)
+        def queryset():
+            return User.objects.filter(subscriber__user=user)
+
+        self.get_queryset = queryset
+        return self.list(request)
 
     @action(
-        detail=True,
-        methods=('post', 'delete'),
+        methods=['post', 'delete'], detail=True,
         serializer_class=SubscriptionSerializer
     )
-    def subscribe(self, request, id=None):
+    def subscribe(self, request, id):
         user = self.request.user
-        author = get_object_or_404(User, pk=id)
-
-        if self.request.method == 'POST':
-            if user == author:
-                raise exceptions.ValidationError(
-                    'Подписка на самого себя запрещена.'
+        author = self.get_object()
+        if request.method == 'DELETE':
+            instance = user.following.filter(author=author)
+            if not instance:
+                raise serializers.ValidationError(
+                    {
+                        'errors': [
+                            'Вы не подписаны на этого автора.'
+                        ]
+                    }
                 )
-            if Follow.objects.filter(
-                user=user,
-                author=author
-            ).exists():
-                raise exceptions.ValidationError('Подписка уже оформлена.')
-
-            Follow.objects.create(user=user, author=author)
-            serializer = self.get_serializer(author)
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        if self.request.method == 'DELETE':
-            if not Follow.objects.filter(
-                user=user,
-                author=author
-            ).exists():
-                raise exceptions.ValidationError(
-                    'Подписка не была оформлена, либо уже удалена.'
-                )
-
-            subscription = get_object_or_404(
-                Follow,
-                user=user,
-                author=author
-            )
-            subscription.delete()
-
+            instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        data = {
+            'user': user.id,
+            'author': id
+        }
+        subscription = SubscriptionCreateSerializer(data=data)
+        subscription.is_valid(raise_exception=True)
+        subscription.save()
+        serializer = self.get_serializer(author)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class TagViewSet(viewsets.ModelViewSet):
