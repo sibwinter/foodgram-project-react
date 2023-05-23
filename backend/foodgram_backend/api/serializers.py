@@ -32,25 +32,25 @@ class CurrentUserSerializer(serializers.ModelSerializer):
         return Follow.objects.filter(user=user, author=obj.id).exists()
 
 
-class FollowSerializer(CurrentUserSerializer):
-    """
-    Сериализатор для вывода подписок пользователя
-    """
-    recipes = serializers.SerializerMethodField(read_only=True)
-    recipes_count = serializers.SerializerMethodField(read_only=True)
+class SubscriptionSerializer(serializers.ModelSerializer):
+    """Сериализатор для подписок."""
+
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name',
-                  'is_subscribed', 'recipes', 'recipes_count')
-
-    @staticmethod
-    def get_recipes_count(obj):
-        return obj.recipes.count()
-
-    def get_is_subscribed(self, obj):
-        user = self.context['request'].user
-        return bool(obj.subscriber.filter(user=user))
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count'
+        )
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -64,6 +64,13 @@ class FollowSerializer(CurrentUserSerializer):
                     error,
                     'не удалось предобразовать в число параметр recipes_limit')
         return ShortRecipeSerializer(recipes, many=True).data
+
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        return bool(obj.subscriber.filter(user=user))
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
 
 
 class SubscriptionCreateSerializer(serializers.ModelSerializer):

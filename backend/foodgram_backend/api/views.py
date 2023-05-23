@@ -20,7 +20,7 @@ from users.models import User
 from recipes.models import (IngredientAmount,
                             Recipe, ShoppingCart,
                             Tag, Ingredient, Favourite)
-from .serializers import (FollowSerializer,
+from .serializers import (SubscriptionSerializer,
                           RecipeCreateUpdateSerializer,
                           ShortRecipeSerializer)
 
@@ -32,7 +32,7 @@ class CurrentUserViewSet(UserViewSet):
 
     @action(
         methods=['get'], detail=False,
-        serializer_class=FollowSerializer
+        serializer_class=SubscriptionSerializer
     )
     def subscriptions(self, request):
         user = self.request.user
@@ -45,7 +45,7 @@ class CurrentUserViewSet(UserViewSet):
 
     @action(
         methods=['post', 'delete'], detail=True,
-        serializer_class=FollowSerializer
+        serializer_class=SubscriptionSerializer
     )
     def subscribe(self, request, id):
         user = self.request.user
