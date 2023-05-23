@@ -3,7 +3,6 @@ from django.core.validators import MinValueValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import Recipe, Ingredient, Favourite, ShoppingCart
 from recipes.models import Tag, IngredientAmount
@@ -32,67 +31,36 @@ class CurrentUserSerializer(serializers.ModelSerializer):
         return Follow.objects.filter(user=user, author=obj.id).exists()
 
 
-class SubscriptionSerializer(serializers.ModelSerializer):
-    """Сериализатор для подписок."""
+class SubscriptionSerializer(CurrentUserSerializer):
+    recipes = serializers.SerializerMethodField(method_name='get_recipes')
+    recipes_count = serializers.SerializerMethodField(
+        method_name='get_recipes_count'
+    )
 
-    is_subscribed = serializers.SerializerMethodField()
-    recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    def get_recipes(self, obj):
+        author_recipes = Recipe.objects.filter(author=obj)
+
+        if 'recipes_limit' in self.context.get('request').GET:
+            recipes_limit = self.context.get('request').GET['recipes_limit']
+            author_recipes = author_recipes[:int(recipes_limit)]
+
+        if author_recipes:
+            serializer = ShortRecipeSerializer(
+                author_recipes,
+                context={'request': self.context.get('request')},
+                many=True
+            )
+            return serializer.data
+
+        return []
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj).count()
 
     class Meta:
         model = User
-        fields = (
-            'email',
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'is_subscribed',
-            'recipes',
-            'recipes_count'
-        )
-
-    def get_recipes(self, obj):
-        request = self.context.get('request')
-        recipes = obj.recipes.all()
-        recipes_limit = request.query_params.get('recipes_limit')
-        if recipes_limit:
-            try:
-                recipes = recipes[:int(recipes_limit)]
-            except ValueError as error:
-                print(
-                    error,
-                    'не удалось предобразовать в число параметр recipes_limit')
-        return ShortRecipeSerializer(recipes, many=True).data
-
-    def get_is_subscribed(self, obj):
-        user = self.context['request'].user
-        return bool(obj.subscriber.filter(user=user))
-
-    def get_recipes_count(self, obj):
-        return obj.recipes.count()
-
-
-class SubscriptionCreateSerializer(serializers.ModelSerializer):
-    """Сериализатор для создания подписки на автора."""
-
-    class Meta:
-        model = Follow
-        fields = '__all__'
-
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Follow.objects.all(),
-                fields=('user', 'author'),
-                message='Вы уже подписаны на этого пользователя.'
-            )
-        ]
-
-    def validate(self, data):
-        if data['user'] == data['author']:
-            raise serializers.ValidationError(
-                'Вы не можете подписаться на самого себя.')
-        return data
+        fields = ('id', 'username', 'first_name', 'last_name', 'email',
+                  'is_subscribed', 'recipes', 'recipes_count')
 
 
 class TagSerializer(serializers.ModelSerializer):
