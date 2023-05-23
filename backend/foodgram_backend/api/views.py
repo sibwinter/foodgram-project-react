@@ -14,7 +14,7 @@ from .serializers import (RecipeSerializer,
                           IngredientSerializer)
 from .permissions import IsAuthorOrAdminPermission
 from .pagination import CustomPageNumberPagination
-from .filters import RecipeFilter
+from .filters import IngredientFilter, RecipeFilter
 from users.models import Follow, User
 from recipes.models import (IngredientAmount,
                             Recipe, ShoppingCart,
@@ -96,7 +96,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrAdminPermission,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = RecipeFilter
+    filterset_class = (RecipeFilter, IngredientFilter,)
     pagination_class = CustomPageNumberPagination
 
     def get_serializer_class(self):
