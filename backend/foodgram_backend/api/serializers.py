@@ -85,6 +85,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
                 'Вы не можете подписаться на самого себя.')
         return data
 
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
