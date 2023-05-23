@@ -37,7 +37,7 @@ class CurrentUserViewSet(UserViewSet):
         user = self.request.user
 
         def queryset():
-            return User.objects.filter(subscriber__user=user)
+            return User.objects.filter(follower__author=user)
 
         self.get_queryset = queryset
         return self.list(request)
