@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import Recipe, Ingredient, Favourite, ShoppingCart
 from recipes.models import Tag, IngredientAmount
@@ -47,6 +48,10 @@ class FollowSerializer(CurrentUserSerializer):
     def get_recipes_count(obj):
         return obj.recipes.count()
 
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        return bool(obj.subscriber.filter(user=user))
+
     def get_recipes(self, obj):
         request = self.context.get('request')
         recipes = obj.recipes.all()
@@ -59,6 +64,28 @@ class FollowSerializer(CurrentUserSerializer):
                     error,
                     'не удалось предобразовать в число параметр recipes_limit')
         return ShortRecipeSerializer(recipes, many=True).data
+
+
+class SubscriptionCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания подписки на автора."""
+
+    class Meta:
+        model = Follow
+        fields = '__all__'
+
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Follow.objects.all(),
+                fields=('user', 'author'),
+                message='Вы уже подписаны на этого пользователя.'
+            )
+        ]
+
+    def validate(self, data):
+        if data['user'] == data['author']:
+            raise serializers.ValidationError(
+                'Вы не можете подписаться на самого себя.')
+        return data
 
 
 class TagSerializer(serializers.ModelSerializer):

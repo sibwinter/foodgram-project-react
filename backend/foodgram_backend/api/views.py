@@ -2,20 +2,21 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, exceptions, permissions
+from djoser.views import UserViewSet
+from rest_framework import (viewsets, status,
+                            exceptions, permissions,
+                            serializers)
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-from .serializers import (RecipeSerializer,
+from .serializers import (RecipeSerializer, SubscriptionCreateSerializer,
                           TagSerializer,
                           IngredientSerializer)
 from .permissions import IsAuthorOrAdminPermission
 from .pagination import CustomPageNumberPagination
 from .filters import IngredientFilter, RecipeFilter
-from users.models import Follow, User
+from users.models import User
 from recipes.models import (IngredientAmount,
                             Recipe, ShoppingCart,
                             Tag, Ingredient, Favourite)
@@ -24,60 +25,52 @@ from .serializers import (FollowSerializer,
                           ShortRecipeSerializer)
 
 
-class FollowViewSet(APIView):
-    serializer_class = FollowSerializer
-    permission_classes = [IsAuthenticated]
+class UserCustomViewSet(UserViewSet):
+    """Кастомизированный вьюсет библиотеки 'djoser'."""
+
     pagination_class = CustomPageNumberPagination
 
-    def post(self, request, *args, **kwargs):
-        user_id = self.kwargs.get('user_id')
-        if user_id == request.user_id:
-            return Response(
-                {'error': 'Нельзя подписаться на себя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if Follow.objects.filter(
-            user=request.user,
-            author_id=user_id
-        ).exists():
-            return Response(
-                {'error': 'Вы же подписаны на этого пользователя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        author = get_object_or_404(User, id=user_id)
-        Follow.objects.create(
-            user=request.user,
-            author_id=user_id
-        )
-        return Response(
-            self.serializer_class(author, context={'request': request}).data,
-            status=status.HTTP_201_CREATED
-        )
+    @action(
+        methods=['get'], detail=False,
+        serializer_class=FollowSerializer
+    )
+    def subscriptions(self, request):
+        user = self.request.user
 
-    def delete(self, request, *args, **kwargs):
-        user_id = self.kwargs.get('user_id')
-        subscription = Follow.objects.filter(
-            user=request.user,
-            author_id=user_id
-        )
-        if subscription:
-            subscription.delete()
-            return Response(
-                status=status.HTTP_204_NO_CONTENT
-            )
-        return Response(
-            {'error': 'Вы не подписаны на данного пользователя'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        def queryset():
+            return User.objects.filter(subscriber__user=user)
 
+        self.get_queryset = queryset
+        return self.list(request)
 
-class FollowListView(ListAPIView):
-    serializer_class = FollowSerializer
-    permission_classes = [IsAuthenticated]
-    pagination_class = CustomPageNumberPagination
-
-    def get_queryset(self):
-        return User.objects.filter(following__user=self.request.user)
+    @action(
+        methods=['post', 'delete'], detail=True,
+        serializer_class=FollowSerializer
+    )
+    def subscribe(self, request, id):
+        user = self.request.user
+        author = self.get_object()
+        if request.method == 'DELETE':
+            instance = user.following.filter(author=author)
+            if not instance:
+                raise serializers.ValidationError(
+                    {
+                        'errors': [
+                            'Вы не подписаны на этого автора.'
+                        ]
+                    }
+                )
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        data = {
+            'user': user.id,
+            'author': id
+        }
+        subscription = SubscriptionCreateSerializer(data=data)
+        subscription.is_valid(raise_exception=True)
+        subscription.save()
+        serializer = self.get_serializer(author)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class TagViewSet(viewsets.ModelViewSet):
