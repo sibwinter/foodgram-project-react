@@ -22,7 +22,8 @@ class RecipeFilter(rest_framework.FilterSet):
         choices=CHOICES_LIST,
         method='is_favorited_method'
     )
-    is_in_shopping_cart = rest_framework.BooleanFilter(
+    is_in_shopping_cart = rest_framework.ChoiceFilter(
+        choices=CHOICES_LIST,
         method='is_in_shopping_cart_method'
     )
     author = rest_framework.NumberFilter(
