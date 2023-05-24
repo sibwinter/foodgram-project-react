@@ -44,7 +44,7 @@ class RecipeFilter(rest_framework.FilterSet):
     def is_favorited_method(self, queryset, name, value):
         if self.request.user.is_anonymous:
             return Recipe.objects.none()
-        
+
         favorites = Favourite.objects.filter(user=self.request.user)
         recipes = [item.recipe.id for item in favorites]
         new_queryset = queryset.filter(id__in=recipes)
