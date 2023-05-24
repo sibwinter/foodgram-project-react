@@ -44,14 +44,15 @@ class RecipeFilter(rest_framework.FilterSet):
     def is_favorited_method(self, queryset, name, value):
         if self.request.user.is_anonymous:
             return Recipe.objects.none()
-
-        recipe = Favourite.objects.values_list("id", flat=True)
-        new_queryset = queryset.filter(id__in=recipe)
+        
+        favorites = Favourite.objects.filter(user=self.request.user)
+        recipes = [item.recipe.id for item in favorites]
+        new_queryset = queryset.filter(id__in=recipes)
 
         if not strtobool(value):
             return queryset.difference(new_queryset)
 
-        return queryset.filter(id__in=recipe)
+        return queryset.filter(id__in=recipes)
 
     def is_in_shopping_cart_method(self, queryset, name, value):
         if self.request.user.is_anonymous:
