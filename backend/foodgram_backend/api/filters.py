@@ -26,9 +26,10 @@ class RecipeFilter(rest_framework.FilterSet):
         choices=CHOICES_LIST,
         method='is_in_shopping_cart_method'
     )
-    author = rest_framework.NumberFilter(
-        field_name='author',
-        lookup_expr='exact'
+    author = rest_framework.ModelMultipleChoiceFilter(
+        queryset=Recipe.objects.all(),
+        field_name="author__id",
+        to_field_name="id",
     )
     tags = rest_framework.ModelMultipleChoiceFilter(
         field_name='tags__slug',
@@ -38,7 +39,7 @@ class RecipeFilter(rest_framework.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('author', 'tags')
+        fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
 
     def is_favorited_method(self, queryset, name, value):
         if self.request.user.is_anonymous:
