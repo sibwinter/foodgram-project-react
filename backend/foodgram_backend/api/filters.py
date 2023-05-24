@@ -3,6 +3,11 @@ from distutils.util import strtobool
 
 from recipes.models import Favourite, Recipe, ShoppingCart, Tag, Ingredient
 
+CHOICES_LIST = (
+    ('0', 'False'),
+    ('1', 'True')
+)
+
 
 class IngredientFilter(rest_framework.FilterSet):
     name = rest_framework.filters.CharFilter(lookup_expr='startswith')
@@ -13,7 +18,8 @@ class IngredientFilter(rest_framework.FilterSet):
 
 
 class RecipeFilter(rest_framework.FilterSet):
-    is_favorited = rest_framework.BooleanFilter(
+    is_favorited = rest_framework.ChoiceFilter(
+        choices=CHOICES_LIST,
         method='is_favorited_method'
     )
     is_in_shopping_cart = rest_framework.BooleanFilter(
