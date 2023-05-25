@@ -8,7 +8,12 @@ from users.models import User
 class Ingredient(models.Model):
     name = models.CharField(
         max_length=200,
-        verbose_name='Название ингредиента'
+        verbose_name='Название ингредиента',
+        validators=[
+            RegexValidator(
+                regex='[-a-zA-Zа-яА-Я]+',
+                message='Ингредиент не может содежержать специальные символы')
+        ]
     )
     measurement_unit = models.CharField(
         max_length=200,
@@ -25,7 +30,15 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Название тэга')
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Название тэга',
+        validators=[
+            RegexValidator(
+                regex='[-a-zA-Zа-яА-Я]+',
+                message='Тэг не может содежержать специальные символы')
+        ]
+    )
     color = models.CharField(
         max_length=7,
         default="#ffffff",
@@ -53,7 +66,15 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
 
-    name = models.CharField(max_length=200, verbose_name='Название рецепта')
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Название рецепта',
+        validators=[
+            RegexValidator(
+                regex='[-a-zA-Zа-яА-Я0-9]+',
+                message='Рецепт не может содежержать специальные символы')
+        ]
+    )
     pub_date = models.DateTimeField(
         verbose_name='Дата',
         help_text='Укажите дату публикции',
