@@ -1,23 +1,22 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserChangeForm
 
 from .models import Follow, User
 
 
+class MyUserChangeForm(UserChangeForm):
+    class Meta(UserChangeForm.Meta):
+        model = User
+
+
 @admin.register(User)
-class UserAdmin(User):
-    list_display = (
-        'username',
-        'id',
-        'email',
-        'first_name',
-        'last_name',
+class UserAdmin(UserAdmin):
+    form = MyUserChangeForm
+
+    fieldsets = UserAdmin.fieldsets + (
+            (None, {'fields': ('first_name', 'second_name')}),
     )
-
-    fields = [('first_name', 'last_name'), 'username', 'email']
-
-    list_filter = ('email', 'first_name')
-    empty_value_display = '-пусто-'
 
 
 @admin.register(Follow)
