@@ -1,21 +1,19 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import UserChangeForm
-
 from .models import Follow, User
 
 
-class MyUserChangeForm(UserChangeForm):
-    class Meta(UserChangeForm.Meta):
-        model = User
 
 
 @admin.register(User)
-class MyUserAdmin(UserAdmin):
-    form = MyUserChangeForm
-    list_filter = ('email', 'username')
-    search_fields = ('username',)
-    empty_value_display = '-пусто-'
+class UserAdmin(admin.ModelAdmin):
+    """Class to customize users display in admin panel."""
+
+    list_display = [
+        'pk', 'username', 'email', 'first_name', 'last_name',
+        'is_staff', 'date_joined']
+    search_fields = ['username', 'first_name', 'last_name', 'email']
+    list_filter = ['username', 'email', 'is_staff', 'date_joined']
+    empty_value_display = '-empty-'
 
 
 @admin.register(Follow)
