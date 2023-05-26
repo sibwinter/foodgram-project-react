@@ -11,6 +11,15 @@ class User(AbstractUser):
         'first_name',
         'last_name',
     ]
+    username = models.CharField(
+        verbose_name='Логин',
+        max_length=150,
+        unique=True,
+        error_messages={
+            'unique': 'Пользователь с таким никнеймом уже существует!',
+        },
+        help_text='Укажите свой никнейм'
+    )
     first_name = models.CharField(
         blank=False,
         max_length=150,
