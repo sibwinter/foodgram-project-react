@@ -5,7 +5,7 @@ from .models import Follow, User
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(User):
     list_display = (
         'username',
         'id',
