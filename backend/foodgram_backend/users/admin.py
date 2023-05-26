@@ -5,15 +5,36 @@ from .models import Follow, User
 
 
 @admin.register(User)
-class UserAdmin(UserAdmin):
+class UserAdmin(admin.ModelAdmin):
     list_display = (
+        'pk',
         'username',
-        'id',
         'email',
         'first_name',
         'last_name',
     )
-    list_filter = ('email', 'first_name')
+    list_filter = ('email', 'username')
+    search_fields = ('username',)
+    empty_value_display = '-пусто-'
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        is_superuser = request.user.is_superuser
+        disabled_fields = set()
+
+        if not is_superuser:
+            disabled_fields |= {
+                'username',
+                'is_superuser',
+                'is_staff',
+                'user_permissions',
+            }
+
+        for f in disabled_fields:
+            if f in form.base_fields:
+                form.base_fields[f].disabled = True
+
+        return form
 
 
 @admin.register(Follow)
