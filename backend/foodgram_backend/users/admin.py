@@ -11,7 +11,7 @@ class MyUserChangeForm(UserChangeForm):
 
 
 @admin.register(User)
-class UserAdmin(UserAdmin):
+class MyUserAdmin(UserAdmin):
     form = MyUserChangeForm
     list_filter = ('email', 'username')
     search_fields = ('username',)
