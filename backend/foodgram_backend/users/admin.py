@@ -15,7 +15,7 @@ class UserAdmin(UserAdmin):
     form = MyUserChangeForm
 
     fieldsets = UserAdmin.fieldsets + (
-            (None, {'fields': ('first_name', 'second_name')}),
+        (None, {'fields': ('first_name', 'second_name')}),
     )
 
 
