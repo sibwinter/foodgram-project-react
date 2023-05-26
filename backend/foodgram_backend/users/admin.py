@@ -13,18 +13,6 @@ class MyUserChangeForm(UserChangeForm):
 @admin.register(User)
 class UserAdmin(UserAdmin):
     form = MyUserChangeForm
-
-    fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('first_name', 'last_name')}),
-    )
-
-    list_display = (
-        'pk',
-        'username',
-        'email',
-        'first_name',
-        'last_name',
-    )
     list_filter = ('email', 'username')
     search_fields = ('username',)
     empty_value_display = '-пусто-'
