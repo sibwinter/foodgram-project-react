@@ -13,7 +13,11 @@ class UserAdmin(admin.ModelAdmin):
         'first_name',
         'last_name',
     )
+    
+    fields = [('first_name', 'last_name'), 'username', 'email']
+
     list_filter = ('email', 'first_name')
+    empty_value_display = '-пусто-'
 
 
 @admin.register(Follow)

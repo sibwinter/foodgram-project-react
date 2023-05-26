@@ -18,7 +18,7 @@ class User(AbstractUser):
         validators=[
             RegexValidator(
                 regex='[-a-zA-Zа-яА-Я]+',
-                message='Имя может содежержать только буквы')
+                message='Имя может содержать только буквы')
         ]
     )
     last_name = models.CharField(
