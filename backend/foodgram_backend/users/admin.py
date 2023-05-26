@@ -11,7 +11,7 @@ class UserAdmin(admin.ModelAdmin):
         'is_staff', 'date_joined']
     search_fields = ['username', 'first_name', 'last_name', 'email']
     list_filter = ['username', 'email', 'is_staff', 'date_joined']
-    empty_value_display = '-empty-'
+    empty_value_display = '-пусто-'
 
 
 @admin.register(Follow)
