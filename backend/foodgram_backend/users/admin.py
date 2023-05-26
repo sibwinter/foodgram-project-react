@@ -1,11 +1,23 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserChangeForm
 
 from .models import Follow, User
 
 
+class MyUserChangeForm(UserChangeForm):
+    class Meta(UserChangeForm.Meta):
+        model = User
+
+
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
+    form = MyUserChangeForm
+
+    fieldsets = UserAdmin.fieldsets + (
+        (None, {'fields': ('first_name', 'last_name')}),
+    )
+
     list_display = (
         'pk',
         'username',
@@ -16,25 +28,6 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('email', 'username')
     search_fields = ('username',)
     empty_value_display = '-пусто-'
-
-    def get_form(self, request, obj=None, change=False, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        is_superuser = request.user.is_superuser
-        disabled_fields = set()
-
-        if not is_superuser:
-            disabled_fields |= {
-                'username',
-                'is_superuser',
-                'is_staff',
-                'user_permissions',
-            }
-
-        for f in disabled_fields:
-            if f in form.base_fields:
-                form.base_fields[f].disabled = True
-
-        return form
 
 
 @admin.register(Follow)
