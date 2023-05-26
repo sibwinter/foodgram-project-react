@@ -4,9 +4,15 @@ from recipes.models import (Recipe, Tag, Ingredient,
                             IngredientAmount, Favourite, ShoppingCart)
 
 
+class IngredientAmountInstanceInline(admin.TabularInline):
+    model = IngredientAmount
+    extra = 1
+
+
 @admin.register(Recipe)
 class RecipesAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name',)
+    inlines = [IngredientAmountInstanceInline]
     list_filter = ('name', )
 
 
@@ -20,12 +26,6 @@ class TagAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', )
     list_filter = ('name', )
-
-
-@admin.register(IngredientAmount)
-class IngredientAmountAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'ingredient', 'amount',)
-    list_filter = ('ingredient', )
 
 
 @admin.register(Favourite)
