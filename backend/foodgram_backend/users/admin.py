@@ -13,7 +13,7 @@ class UserAdmin(admin.ModelAdmin):
         'first_name',
         'last_name',
     )
-    
+
     fields = [('first_name', 'last_name'), 'username', 'email']
 
     list_filter = ('email', 'first_name')
