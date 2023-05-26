@@ -7,6 +7,7 @@ from recipes.models import (Recipe, Tag, Ingredient,
 class IngredientAmountInstanceInline(admin.TabularInline):
     model = IngredientAmount
     extra = 1
+    min_num = 1
 
 
 @admin.register(Recipe)
