@@ -6,12 +6,11 @@ from .models import Follow, User
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
-        'pk',
         'username',
+        'id',
         'email',
         'first_name',
         'last_name',
-        'role',
     )
     list_filter = ('email', 'username')
     search_fields = ('username',)
