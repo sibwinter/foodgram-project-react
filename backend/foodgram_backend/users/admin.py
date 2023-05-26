@@ -4,11 +4,6 @@ from django.contrib.auth.forms import UserChangeForm
 from .models import Follow, User
 
 
-class MyUserChangeForm(UserChangeForm):
-    class Meta(UserChangeForm.Meta):
-        model = User
-
-
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
