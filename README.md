@@ -437,7 +437,7 @@ POST /api/recipes/
 ```sh
 http://217.144.102.201/admin
 login: admin (admin@admin.ru)
-pass: admin
+pass: Polopo00
 ```
 
 ### Автор
